@@ -19,11 +19,12 @@ $accion=$_POST["estacionar"];
 $patente=$_POST["patente"];
 $ahora=date("y-m-d h:y:s");
 $listadeautos=array();
+$listaaux=array();
 
 if ($accion=="ingreso") {
 	echo "Se guardo la patente: $patente";
 	$archivo=fopen("ticket.txt", "a"); //crea el archivo en la raiz 
-	fwrite($archivo, $patente." | ".$ahora. PHP_EOL); // escribe el archivo con los datos que ingreso el usuario
+	fwrite($archivo, $patente. "|".$ahora. PHP_EOL); // escribe el archivo con los datos que ingreso el usuario
 	fclose($archivo); // cierra el archivo
 }
 else
@@ -34,7 +35,43 @@ else
 		$auto=explode("|", $renglon); // devuelve un array con la patente y la fecha con el delimitado que yo seleccione que es ""|"" 
 		$listadeautos[]=$auto;
 	}
-	var_dump($listadeautos);
+	//var_dump($listadeautos);
+	fclose($archivo);
+	$esta=false;
+		foreach ($listadeautos as $auto) 
+	{
+		if ($auto[0] == $patente) 
+		{
+			$esta=true;
+			$fechainicio=$auto[1];
+			$diferencia=strtotime($ahora)-strtotime($fechainicio);
+			echo "el tiempo transcurrido es $diferencia";
+		}
+		else
+		{
+			if ($auto[0] != "") {
+				$listaaux[]=$auto;
+			}
+
+
+		}
+
+	}
+		if ($esta) 
+		{
+			echo "el auto esta";
+			$archivo=fopen("ticket.txt", "w");
+			foreach ($listaaux as $auto) 
+			{
+				fwrite($archivo, $auto[0]. "|". $auto[1] . PHP_EOL);	
+				}
+			fclose($archivo);
+		}
+		else
+		{
+			echo "el auto no esta";
+		}
+		
 }
 
 
